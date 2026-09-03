@@ -2,6 +2,7 @@ name: pages
 on:
   push:
     branches: [main]
+  workflow_dispatch:
 permissions:
   contents: read
   pages: write
@@ -17,6 +18,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Vendor current saiyan-office static site
+        uses: actions/checkout@v4
+        with:
+          repository: rezent011-sketch/saiyan-office
+          ref: gh-pages
+          path: saiyan-office
+          persist-credentials: false
+      - name: Keep user-site root; drop nested git metadata
+        run: |
+          test -f index.html
+          test ! -f CNAME
+          rm -rf saiyan-office/.git
+          test -f saiyan-office/index.html
+          test -f saiyan-office/.nojekyll
+          grep -q '<title>AIバーチャルオフィス</title>' saiyan-office/index.html
+          grep -q '送る' saiyan-office/index.html
+          grep -q '開発担当Bot' saiyan-office/index.html
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
