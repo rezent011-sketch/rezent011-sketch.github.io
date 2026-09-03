@@ -4,7 +4,7 @@ on:
     branches: [main]
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 concurrency:
@@ -25,16 +25,26 @@ jobs:
           ref: gh-pages
           path: saiyan-office
           persist-credentials: false
-      - name: Keep user-site root; drop nested git metadata
+      - name: Keep user-site root; persist office folder like omamori
         run: |
+          set -euo pipefail
           test -f index.html
           test ! -f CNAME
-          rm -rf saiyan-office/.git
+          rm -rf saiyan-office/.git saiyan-office/.github
           test -f saiyan-office/index.html
           test -f saiyan-office/.nojekyll
           grep -q '<title>AIバーチャルオフィス</title>' saiyan-office/index.html
           grep -q '送る' saiyan-office/index.html
           grep -q '開発担当Bot' saiyan-office/index.html
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A saiyan-office
+          if git diff --cached --quiet; then
+            echo 'saiyan-office folder already current'
+          else
+            git commit -m "Sync saiyan-office from gh-pages [skip ci]"
+            git push
+          fi
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
