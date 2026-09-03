@@ -1,4 +1,4 @@
-# Sync trigger: NO_OVERLAY_CARDS_20260903
+# Sync trigger: STAFF_REST_WORK_20260903
 name: pages
 on:
   push:
@@ -38,6 +38,7 @@ jobs:
           grep -q '送る' saiyan-office/index.html
           grep -q '開発担当Bot' saiyan-office/index.html
           grep -q 'NO_OVERLAY_CARDS_20260903' saiyan-office/index.html
+          grep -q 'STAFF_REST_WORK_20260903' saiyan-office/index.html
           grep -q 'display: none !important;' saiyan-office/index.html
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
